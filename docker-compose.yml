@@ -1,0 +1,40 @@
+services:
+  inventoryservice:
+    image: pynativeexample-inventoryservice:latest
+    build:
+      context: .
+      target: inventoryservice
+      extra_hosts:
+        - "host.docker.internal:host-gateway"
+      args:
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
+        PIP_TRUSTED_HOST: ${PIP_TRUSTED_HOST:-}
+    environment:
+      INVENTORY_SERVICE_RESPONSE_DELAY: ${INVENTORY_SERVICE_RESPONSE_DELAY:-0s}
+    ports:
+      - "9092:9092"
+      - "9202:9202"
+    networks: [app_net]
+
+  orderservice:
+    image: pynativeexample-orderservice:latest
+    build:
+      context: .
+      target: orderservice
+      extra_hosts:
+        - "host.docker.internal:host-gateway"
+      args:
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://pypi.org/simple}
+        PIP_TRUSTED_HOST: ${PIP_TRUSTED_HOST:-}
+    environment:
+      INVENTORY_SERVICE_API_ADDRESS: inventoryservice:9202
+      ORDER_SERVICE_REQUEST_TIMEOUT: ${ORDER_SERVICE_REQUEST_TIMEOUT:-5s}
+      ORDER_SERVICE_SOFT_DEADLINE_MARGIN: ${ORDER_SERVICE_SOFT_DEADLINE_MARGIN:-1s}
+    ports:
+      - "9091:9091"
+    depends_on: [inventoryservice]
+    networks: [app_net]
+
+networks:
+  app_net:
+    driver: bridge
