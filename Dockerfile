@@ -1,4 +1,5 @@
-FROM python:3.12-slim AS build
+ARG DEPENDENCY_DOCKER_REGISTRY=docker.io
+FROM ${DEPENDENCY_DOCKER_REGISTRY}/library/python:3.12-slim AS build
 ARG PIP_INDEX_URL=https://pypi.org/simple
 ARG PIP_TRUSTED_HOST=
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
@@ -13,7 +14,7 @@ RUN PYTHONPATH=/install/lib/python3.12/site-packages \
     python -m grpc_tools.protoc -Iproto --python_out=src --grpc_python_out=src \
     proto/processorderitem.proto proto/inventoryserviceapi.proto
 
-FROM python:3.12-slim AS runtime
+FROM ${DEPENDENCY_DOCKER_REGISTRY}/library/python:3.12-slim AS runtime
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONPATH=/app:/usr/local/lib/python3.12/site-packages
 COPY --from=build /install /usr/local
 WORKDIR /app
