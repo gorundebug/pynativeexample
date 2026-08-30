@@ -1,6 +1,6 @@
 services:
   inventoryservice:
-    image: pynativeexample-inventoryservice:latest
+    image: pynativeexample-inventoryservice:local
     build:
       context: .
       target: inventoryservice
@@ -18,7 +18,7 @@ services:
     networks: [app_net]
 
   orderservice:
-    image: pynativeexample-orderservice:latest
+    image: pynativeexample-orderservice:local
     build:
       context: .
       target: orderservice
