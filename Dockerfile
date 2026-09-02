@@ -1,5 +1,6 @@
 ARG DEPENDENCY_DOCKER_REGISTRY=docker.io
 FROM ${DEPENDENCY_DOCKER_REGISTRY}/library/python:3.12-slim AS build
+ARG TARGETARCH
 ARG PIP_INDEX_URL=https://pypi.org/simple
 ARG PIP_TRUSTED_HOST=
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
@@ -7,7 +8,8 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_TRUSTED_HOST=${PIP_TRUSTED_HOST}
 WORKDIR /app
 COPY requirements.txt .
-RUN python -m pip install --no-cache-dir --prefix=/install -r requirements.txt grpcio-tools==1.81.0
+RUN --mount=type=cache,id=servicegen-python-native-pip-v1-${TARGETARCH},target=/root/.cache/pip,sharing=locked \
+    python -m pip install --prefix=/install -r requirements.txt grpcio-tools==1.81.0
 COPY proto ./proto
 COPY src ./src
 RUN PYTHONPATH=/install/lib/python3.12/site-packages \
