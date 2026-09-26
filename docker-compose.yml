@@ -1,6 +1,6 @@
 services:
   inventoryservice:
-    image: pynativeexample-inventoryservice:local
+    image: pynativeexample-inventoryservice:${DOCKER_IMAGE_TAG:-local}
     build:
       context: .
       target: inventoryservice
@@ -18,7 +18,7 @@ services:
     networks: [app_net]
 
   orderservice:
-    image: pynativeexample-orderservice:local
+    image: pynativeexample-orderservice:${DOCKER_IMAGE_TAG:-local}
     build:
       context: .
       target: orderservice
