@@ -8,9 +8,9 @@ from uuid import uuid4
 
 import grpc
 from aiohttp import web
-
 import inventoryserviceapi_pb2_grpc
 import processorderitem_pb2
+
 from common import (
     benchmark_http_middleware,
     env_duration,
